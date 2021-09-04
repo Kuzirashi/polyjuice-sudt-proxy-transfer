@@ -11,7 +11,6 @@ const SUDT_ID = '30'; // ckETH SUDT ID on Layer 2
 const SUDT_NAME = 'ckETH';
 const SUDT_SYMBOL = 'ckETH';
 const SUDT_TOTAL_SUPPLY = 9999999999;
-const SUDT_DECIMALS = 18;
 
 const polyjuiceConfig = {
     web3Url: 'https://godwoken-testnet-web3-rpc.ckbapp.dev'
@@ -45,7 +44,7 @@ const CompiledSudtProxyContractArtifact = require(`./build/contracts/ERC20.json`
 
     const deployTx = new web3.eth.Contract(CompiledSudtProxyContractArtifact.abi).deploy({
         data: getBytecodeFromArtifact(CompiledSudtProxyContractArtifact),
-        arguments: [SUDT_NAME, SUDT_SYMBOL, SUDT_TOTAL_SUPPLY, SUDT_ID, SUDT_DECIMALS]
+        arguments: [SUDT_NAME, SUDT_SYMBOL, SUDT_TOTAL_SUPPLY, SUDT_ID]
     }).send({
         from: SENDER,
         gas: 6000000,
