@@ -1,8 +1,9 @@
+const fs = require('fs').promises;
 const Web3 = require('web3');
 const { PolyjuiceHttpProvider, PolyjuiceAccounts } = require("@polyjuice-provider/web3");
 const { AddressTranslator } = require('nervos-godwoken-integration');
 
-const CompiledContractArtifact = require(`./build/contracts/ERC20.json`);
+const CompiledSudtProxyContractArtifact = require(`./build/contracts/ERC20.json`);
 
 const SENDER = '0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8';
 const RECEIVER = '0xE7320E016230f0E8AA3B5F22895FC49dc101c2cB';
@@ -27,9 +28,11 @@ web3.eth.accounts = new PolyjuiceAccounts(polyjuiceConfig);
 web3.eth.accounts.wallet.add(SENDER_PRIVATE_KEY);
 web3.eth.Contract.setProvider(provider, web3.eth.accounts);
 
-const CompiledSudtProxyContractArtifact = require(`./build/contracts/ERC20.json`);
 
 (async () => {
+    // You need to use this exact bytecode for SUDT proxy otherwise it won't work
+    const SudtProxyBytecode = (await (await fs.readFile('./contracts/SudtERC20Proxy.bin')).toString());
+
     console.log('Testing ckETH SUDT proxy transfer on Nervos Layer 2 Testnet');
     console.log(`Using Ethereum address: ${SENDER}`);
 
@@ -43,7 +46,7 @@ const CompiledSudtProxyContractArtifact = require(`./build/contracts/ERC20.json`
     console.log(`Deploying SUDT Proxy contract...`);
 
     const deployTx = new web3.eth.Contract(CompiledSudtProxyContractArtifact.abi).deploy({
-        data: getBytecodeFromArtifact(CompiledSudtProxyContractArtifact),
+        data: SudtProxyBytecode,
         arguments: [SUDT_NAME, SUDT_SYMBOL, SUDT_TOTAL_SUPPLY, SUDT_ID]
     }).send({
         from: SENDER,
@@ -100,7 +103,3 @@ const CompiledSudtProxyContractArtifact = require(`./build/contracts/ERC20.json`
         from: RECEIVER
     }));
 })();
-
-function getBytecodeFromArtifact(contractArtifact) {
-    return contractArtifact.bytecode || contractArtifact.data?.bytecode?.object
-}

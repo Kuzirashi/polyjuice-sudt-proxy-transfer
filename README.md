@@ -6,39 +6,28 @@ yarn compile // docker required for compilation
 node transfer.js
 ```
 
-## Expected
-
-Transfer goes through - Sender ckETH balance decreased and Receiver ckETH balance increased.
-
-## Actual
-
-Transfer call and send both fail.
+## Example
 
 ```
 ➜ node transfer.js
 Testing ckETH SUDT proxy transfer on Nervos Layer 2 Testnet
 Using Ethereum address: 0xd46aC0Bc23dB5e8AfDAAB9Ad35E9A3bA05E092E8
 Deploying SUDT Proxy contract...
-Deploy transaction hash: 0xb2f3d8a8ec6b9e8ac40a67fd0f7046dd2ef43caaf352f88e4a6376f2f4a474e6
-Deployed SUDT-ERC20 Proxy contract address: 0x0Af214B26c6CF6af293B6378a6719d2f927DfD49
+Deploy transaction hash: 0x9254a0ed95352cc90309c24dc176b9262b903646e814bd0382b5b0e3a23eabcd
+Deployed SUDT-ERC20 Proxy contract address: 0x84220609e42b51c9aEf056Da0A06983746974291
 Corresponding Sender Polyjuice address: 0x56eaccaa2ce59c6c0400b1e0b2e70dfd2dddd166
 Checking ckETH balance...
 Sender ckETH balance before transfer:  776999000000000000
 Receiver ckETH balance before transfer:  0
 Try calling transfer before sending...
-Can't call transfer method. Error.
-Error: Returned error: {"jsonrpc":"2.0","id":8,"error":"invalid exit code 2"}
-    at Object.ErrorResponse (/home/kuzi/projects/polyjuice-sudt-proxy-transfer/node_modules/web3-core-helpers/lib/errors.js:28:19)
-    at /home/kuzi/projects/polyjuice-sudt-proxy-transfer/node_modules/web3-core-requestmanager/lib/index.js:303:36
-    at PolyjuiceHttpProvider.send (/home/kuzi/projects/polyjuice-sudt-proxy-transfer/node_modules/@polyjuice-provider/web3/lib/providers.js:160:21)
-    at processTicksAndRejections (internal/process/task_queues.js:93:5) {
-  data: null
-}
 Try sending ckETH transfer...
-# <STUCK - NEVER COMPLETES> <==========
+Sender ckETH balance after transfer:  776998999999999000
+Receiver ckETH balance after transfer:  1000
 ```
 
 ## Notes
+
+**Important**: Make sure you use provided bytecode in SudtERC20Proxy.bin - it is whitelisted in Nervos Layer 2 and using different bytecode won't work. This is compiled using: solidity0.8.2 using solcjs.
 
 Make sure `ACCOUNT_PRIVATE_KEY` and `SENDER` correspond respectively to ckETH sender private key and sender address. Make sure Sender has CKB on Layer 2 and ckETH on Layer 2. Default accounts should already have some ckETH and CKB on Layer 2.
 
