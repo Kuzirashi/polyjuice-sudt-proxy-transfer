@@ -12,6 +12,7 @@ const SUDT_ID = '30'; // ckETH SUDT ID on Layer 2
 const SUDT_NAME = 'ckETH';
 const SUDT_SYMBOL = 'ckETH';
 const SUDT_TOTAL_SUPPLY = 9999999999;
+const SUDT_DECIMALS = 18;
 
 const polyjuiceConfig = {
     web3Url: 'https://godwoken-testnet-web3-rpc.ckbapp.dev'
@@ -31,7 +32,7 @@ web3.eth.Contract.setProvider(provider, web3.eth.accounts);
 
 (async () => {
     // You need to use this exact bytecode for SUDT proxy otherwise it won't work
-    const SudtProxyBytecode = (await (await fs.readFile('./contracts/SudtERC20Proxy.bin')).toString());
+    const SudtProxyBytecode = (await (await fs.readFile('./contracts/SudtERC20Proxy_UserDefinedDecimals.bin')).toString());
 
     console.log('Testing ckETH SUDT proxy transfer on Nervos Layer 2 Testnet');
     console.log(`Using Ethereum address: ${SENDER}`);
@@ -47,7 +48,7 @@ web3.eth.Contract.setProvider(provider, web3.eth.accounts);
 
     const deployTx = new web3.eth.Contract(CompiledSudtProxyContractArtifact.abi).deploy({
         data: SudtProxyBytecode,
-        arguments: [SUDT_NAME, SUDT_SYMBOL, SUDT_TOTAL_SUPPLY, SUDT_ID]
+        arguments: [SUDT_NAME, SUDT_SYMBOL, SUDT_TOTAL_SUPPLY, SUDT_ID, SUDT_DECIMALS]
     }).send({
         from: SENDER,
         gas: 6000000,

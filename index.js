@@ -8,6 +8,7 @@ const ACCOUNT_PRIVATE_KEY = '0xd9bc30dc17023fbb68fe3002e0ff9107b241544fd6d608630
 const SUDT_ID = '30'; // Replace this with SUDT ID received from depositing SUDT to Layer 2. This should be a number.
 const SUDT_NAME = 'ckETH';
 const SUDT_SYMBOL = 'ckETH';
+const SUDT_DECIMALS = 18;
 const SUDT_TOTAL_SUPPLY = 9999999999;
 
 const polyjuiceConfig = {
@@ -27,7 +28,7 @@ web3.eth.Contract.setProvider(provider, web3.eth.accounts);
 
 (async () => {
     // You need to use this exact bytecode for SUDT proxy otherwise it won't work
-    const SudtProxyBytecode = (await (await fs.readFile('./contracts/SudtERC20Proxy.bin')).toString());
+    const SudtProxyBytecode = (await (await fs.readFile('./contracts/SudtERC20Proxy_UserDefinedDecimals.bin')).toString());
 
     console.log(`Using Ethereum address: ${account.address}`);
 
@@ -42,7 +43,7 @@ web3.eth.Contract.setProvider(provider, web3.eth.accounts);
 
     const deployTx = new web3.eth.Contract(CompiledContractArtifact.abi).deploy({
         data: SudtProxyBytecode,
-        arguments: [SUDT_NAME, SUDT_SYMBOL, SUDT_TOTAL_SUPPLY, SUDT_ID]
+        arguments: [SUDT_NAME, SUDT_SYMBOL, SUDT_TOTAL_SUPPLY, SUDT_ID, SUDT_DECIMALS]
     }).send({
         from: account.address,
         gas: 6000000,
